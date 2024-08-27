@@ -1,92 +1,64 @@
 import { DogCard } from "../Shared/DogCard";
 import { Component } from "react";
-import { dogPictures } from "../dog-pictures";
+import { Requests } from "../api";
 
 // Right now these dogs are constant, but in reality we should be getting these from our server
 export class ClassDogs extends Component {
+  componentDidMount() {
+    this.props.refetchData();
+  }
+
+  componentDidUpdate(prevState) {
+    if (prevState.allDogs !== this.props.allDogs) {
+      const favoriteCount = this.props.allDogs.filter(
+        (dog) => dog.isFavorite
+      ).length;
+      const unfavoriteCount = this.props.allDogs.filter(
+        (dog) => !dog.isFavorite
+      ).length;
+      if (
+        favoriteCount !== this.props.favCount ||
+        unfavoriteCount !== this.props.unfavCount
+      ) {
+        this.props.setFavCount(favoriteCount);
+        this.props.setUnfavCount(unfavoriteCount);
+      }
+    }
+  }
+
   render() {
+    const filteredDogs = this.props.allDogs.filter((dog) => {
+      if (this.props.selectedFilter === "favorited") {
+        return dog.isFavorite;
+      } else if (this.props.selectedFilter === "unfavorited") {
+        return !dog.isFavorite;
+      } else if (this.props.selectedFilter === "allDogs") {
+        return dog;
+      }
+    });
+
     return (
       <>
-        <DogCard
-          dog={{
-            id: 1,
-            image: dogPictures.BlueHeeler,
-            description: "Example Description",
-            isFavorite: false,
-            name: "Cute Blue Heeler",
-          }}
-          key={1}
-          onTrashIconClick={() => {
-            alert("clicked trash");
-          }}
-          onHeartClick={() => {
-            alert("clicked heart");
-          }}
-          onEmptyHeartClick={() => {
-            alert("clicked empty heart");
-          }}
-          isLoading={false}
-        />
-        <DogCard
-          dog={{
-            id: 2,
-            image: dogPictures.Boxer,
-            description: "Example Description",
-            isFavorite: false,
-            name: "Cute Boxer",
-          }}
-          key={2}
-          onTrashIconClick={() => {
-            alert("clicked trash");
-          }}
-          onHeartClick={() => {
-            alert("clicked heart");
-          }}
-          onEmptyHeartClick={() => {
-            alert("clicked empty heart");
-          }}
-          isLoading={false}
-        />
-        <DogCard
-          dog={{
-            id: 3,
-            image: dogPictures.Chihuahua,
-            description: "Example Description",
-            isFavorite: false,
-            name: "Cute Chihuahua",
-          }}
-          key={3}
-          onTrashIconClick={() => {
-            alert("clicked trash");
-          }}
-          onHeartClick={() => {
-            alert("clicked heart");
-          }}
-          onEmptyHeartClick={() => {
-            alert("clicked empty heart");
-          }}
-          isLoading={false}
-        />
-        <DogCard
-          dog={{
-            id: 4,
-            image: dogPictures.Corgi,
-            description: "Example Description",
-            isFavorite: false,
-            name: "Cute Corgi",
-          }}
-          key={4}
-          onTrashIconClick={() => {
-            alert("clicked trash");
-          }}
-          onHeartClick={() => {
-            alert("clicked heart");
-          }}
-          onEmptyHeartClick={() => {
-            alert("clicked empty heart");
-          }}
-          isLoading={false}
-        />
+        {filteredDogs.map((dog) => (
+          <DogCard
+            dog={dog}
+            key={dog.id}
+            onTrashIconClick={() => {
+              Requests.deleteDog(dog.id).then(() => this.props.refetchData());
+            }}
+            onHeartClick={() => {
+              Requests.updateDog(dog.id, { isFavorite: false }).then(() =>
+                this.props.refetchData()
+              );
+            }}
+            onEmptyHeartClick={() => {
+              Requests.updateDog(dog.id, { isFavorite: true }).then(() =>
+                this.props.refetchData()
+              );
+            }}
+            isLoading={this.props.isLoading}
+          />
+        ))}
       </>
     );
   }
