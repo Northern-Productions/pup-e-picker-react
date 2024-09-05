@@ -4,13 +4,15 @@ import React from "react";
 
 export class ClassSection extends Component {
   switchActive = (e, filter) => {
-    const selectors = document.querySelectorAll(".selector");
-    selectors.forEach((selector) => {
-      selector.classList.remove("active");
-    });
-    e.target.classList.add("active");
-    this.props.setSelectedFilter(filter);
-    this.props.setShowCreateDogForm(filter === "create dog");
+    if (!e.target.classList.contains("active")) {
+      e.target.classList.add("active");
+      this.props.setSelectedFilter(filter);
+      this.props.setShowCreateDogForm(filter === "create dog");
+    } else {
+      e.target.classList.remove("active");
+      this.props.setSelectedFilter("allDogs");
+      this.props.setShowCreateDogForm(false);
+    }
   };
 
   render() {
@@ -29,7 +31,7 @@ export class ClassSection extends Component {
           <div className="selectors">
             {/* This should display the favorited count */}
             <div
-              className={`selector active ${
+              className={`selector ${
                 selectedFilter === "favorited" ? "active" : ""
               }`}
               onClick={(e) => {

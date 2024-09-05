@@ -6,14 +6,17 @@ import { toast, Toaster } from "react-hot-toast";
 // use this as your default selected image
 const defaultSelectedImage = dogPictures.BlueHeeler;
 
-export const FunctionalCreateDogForm = ({ refetchData }) => {
+export const FunctionalCreateDogForm = ({
+  refetchData,
+  isLoading,
+  setIsLoading,
+}) => {
   const [dogName, setDogName] = useState("");
   const [dogDescription, setDogDescription] = useState("");
   const [dogPicture, setDogPicture] = useState(defaultSelectedImage);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
+  const handleAddDog = () => {
+    setIsLoading(true);
     Requests.postDog(dogName, dogPicture, dogDescription)
       .then(() => {
         toast.success("Dog created successfully!", {
@@ -36,11 +39,22 @@ export const FunctionalCreateDogForm = ({ refetchData }) => {
           },
         });
         console.error("Error creating dog:", error);
-      });
+      })
+      .finally(() => setIsLoading(false));
+  };
 
+  const handleReset = () => {
     setDogName("");
     setDogDescription("");
     setDogPicture(defaultSelectedImage);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    handleAddDog();
+
+    handleReset();
   };
 
   return (
@@ -51,7 +65,7 @@ export const FunctionalCreateDogForm = ({ refetchData }) => {
         type="text"
         id="name"
         name="name"
-        disabled={false}
+        disabled={isLoading}
         value={dogName}
         onChange={(e) => setDogName(e.target.value)}
       />
@@ -61,13 +75,14 @@ export const FunctionalCreateDogForm = ({ refetchData }) => {
         id="description"
         cols={80}
         rows={10}
-        disabled={false}
+        disabled={isLoading}
         value={dogDescription}
         onChange={(e) => setDogDescription(e.target.value)}
       ></textarea>
       <label htmlFor="picture">Select an Image</label>
       <select
         id="dogPicture"
+        disabled={isLoading}
         value={dogPicture}
         onChange={(e) => setDogPicture(e.target.value)}
       >
@@ -79,10 +94,10 @@ export const FunctionalCreateDogForm = ({ refetchData }) => {
           );
         })}
       </select>
-      <input type="submit" />
+      <input type="submit" disabled={isLoading} />
       <Toaster />
     </form>
   );
 };
 
-// When submitted make the data refetch and display a success message.
+// Make the form button disabled until the form is filled out

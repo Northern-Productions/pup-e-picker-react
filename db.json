@@ -11,7 +11,7 @@
       "name": "Kayla",
       "image": "/assets/boxer.png",
       "description": "Volkswagen male lime Folk Technetium",
-      "isFavorite": true,
+      "isFavorite": false,
       "id": "1"
     },
     {

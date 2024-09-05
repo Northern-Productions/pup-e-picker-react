@@ -6,16 +6,10 @@ export const FunctionalSection = ({
   filter,
   unfavCount,
   setSelectedFilter,
-  setShowCreateDogForm,
 }) => {
-  const switchActive = (e, filter) => {
-    const selectors = document.querySelectorAll(".selector");
-    selectors.forEach((selector) => {
-      selector.classList.remove("active");
-    });
-    e.target.classList.add("active");
-    setSelectedFilter(filter);
-    setShowCreateDogForm(filter === "create dog");
+  const switchActive = (newFilter) => {
+    const userSelection = newFilter === filter ? "allDogs" : newFilter;
+    setSelectedFilter(userSelection);
   };
 
   return (
@@ -29,8 +23,8 @@ export const FunctionalSection = ({
           {/* This should display the favorited count */}
           <div
             className={`selector ${filter === "favorited" ? "active" : ""}`}
-            onClick={(e) => {
-              switchActive(e, "favorited");
+            onClick={() => {
+              switchActive("favorited");
             }}
           >
             favorited ( {favCount} )
@@ -39,16 +33,18 @@ export const FunctionalSection = ({
           {/* This should display the unfavorited count */}
           <div
             className={`selector ${filter === "unfavorited" ? "active" : ""}`}
-            onClick={(e) => {
-              switchActive(e, "unfavorited");
+            onClick={() => {
+              switchActive("unfavorited");
             }}
           >
             unfavorited ( {unfavCount} )
           </div>
+
+          {/* This should display the create dog form */}
           <div
             className={`selector ${filter === "create dog" ? "active" : ""}`}
-            onClick={(e) => {
-              switchActive(e, "create dog");
+            onClick={() => {
+              switchActive("create dog");
             }}
           >
             create dog
