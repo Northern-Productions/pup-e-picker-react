@@ -28,7 +28,7 @@ export const FunctionalCreateDogForm = ({
           },
         });
       })
-      .then(() => refetchData())
+      .then(() => refetchData().then(handleReset()))
       .catch((error) => {
         toast.error("Failed to create dog. Please try again.", {
           position: "top-center",
@@ -53,8 +53,6 @@ export const FunctionalCreateDogForm = ({
     e.preventDefault();
 
     handleAddDog();
-
-    handleReset();
   };
 
   return (
@@ -99,5 +97,3 @@ export const FunctionalCreateDogForm = ({
     </form>
   );
 };
-
-// Make the form button disabled until the form is filled out

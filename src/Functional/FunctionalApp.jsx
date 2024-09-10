@@ -10,8 +10,8 @@ export function FunctionalApp() {
   const [allDogs, setAllDogs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const favCount = allDogs.filter((dog) => dog.isFavorite).length;
-  const unfavCount = allDogs.filter((dog) => !dog.isFavorite).length;
+  const favDogList = allDogs.filter((dog) => dog.isFavorite);
+  const unfavDogList = allDogs.filter((dog) => !dog.isFavorite);
 
   const refetchData = () => {
     return Requests.getAllDogs()
@@ -26,8 +26,8 @@ export function FunctionalApp() {
 
   const dogsList = {
     allDogs: allDogs,
-    favorited: favCount,
-    unfavorited: unfavCount,
+    favorited: favDogList,
+    unfavorited: unfavDogList,
   };
 
   useEffect(() => {
@@ -40,10 +40,10 @@ export function FunctionalApp() {
         <h1>pup-e-picker (Functional)</h1>
       </header>
       <FunctionalSection
-        filter={selectedFilter}
-        favCount={favCount}
-        unfavCount={unfavCount}
+        selectedFilter={selectedFilter}
         setSelectedFilter={setSelectedFilter}
+        favCount={favDogList.length}
+        unfavCount={unfavDogList.length}
       >
         {selectedFilter !== "create dog" && (
           <FunctionalDogs

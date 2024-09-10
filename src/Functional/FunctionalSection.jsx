@@ -3,12 +3,12 @@ import { Link } from "react-router-dom";
 export const FunctionalSection = ({
   children,
   favCount,
-  filter,
+  selectedFilter,
   unfavCount,
   setSelectedFilter,
 }) => {
   const switchActive = (newFilter) => {
-    const userSelection = newFilter === filter ? "allDogs" : newFilter;
+    const userSelection = newFilter === selectedFilter ? "allDogs" : newFilter;
     setSelectedFilter(userSelection);
   };
 
@@ -22,7 +22,9 @@ export const FunctionalSection = ({
         <div className="selectors">
           {/* This should display the favorited count */}
           <div
-            className={`selector ${filter === "favorited" ? "active" : ""}`}
+            className={`selector ${
+              selectedFilter === "favorited" ? "active" : ""
+            }`}
             onClick={() => {
               switchActive("favorited");
             }}
@@ -32,7 +34,9 @@ export const FunctionalSection = ({
 
           {/* This should display the unfavorited count */}
           <div
-            className={`selector ${filter === "unfavorited" ? "active" : ""}`}
+            className={`selector ${
+              selectedFilter === "unfavorited" ? "active" : ""
+            }`}
             onClick={() => {
               switchActive("unfavorited");
             }}
@@ -42,7 +46,9 @@ export const FunctionalSection = ({
 
           {/* This should display the create dog form */}
           <div
-            className={`selector ${filter === "create dog" ? "active" : ""}`}
+            className={`selector ${
+              selectedFilter === "create dog" ? "active" : ""
+            }`}
             onClick={() => {
               switchActive("create dog");
             }}

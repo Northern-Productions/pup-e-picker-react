@@ -4,59 +4,41 @@ import { Requests } from "../api";
 
 // Right now these dogs are constant, but in reality we should be getting these from our server
 export class ClassDogs extends Component {
-  componentDidMount() {
-    this.props.refetchData();
-  }
-
-  componentDidUpdate(prevState) {
-    if (prevState.allDogs !== this.props.allDogs) {
-      const favoriteCount = this.props.allDogs.filter(
-        (dog) => dog.isFavorite
-      ).length;
-      const unfavoriteCount = this.props.allDogs.filter(
-        (dog) => !dog.isFavorite
-      ).length;
-      if (
-        favoriteCount !== this.props.favCount ||
-        unfavoriteCount !== this.props.unfavCount
-      ) {
-        this.props.setFavCount(favoriteCount);
-        this.props.setUnfavCount(unfavoriteCount);
-      }
-    }
-  }
-
   render() {
-    const filteredDogs = this.props.allDogs.filter((dog) => {
-      if (this.props.selectedFilter === "favorited") {
-        return dog.isFavorite;
-      } else if (this.props.selectedFilter === "unfavorited") {
-        return !dog.isFavorite;
-      } else if (this.props.selectedFilter === "allDogs") {
-        return dog;
-      }
-    });
+    const { refetchData, isLoading, setIsLoading, dogsList } = this.props;
+
+    const handleTrashClick = (id) => {
+      setIsLoading(true);
+      return Requests.deleteDog(id)
+        .then(() => refetchData())
+        .catch((error) => console.error("Error", error))
+        .finally(() => setIsLoading(false));
+    };
+
+    const handleHeartClick = (id, bool) => {
+      setIsLoading(true);
+      return Requests.updateDog(id, { isFavorite: bool })
+        .then(() => refetchData())
+        .catch((error) => console.error("Error", error))
+        .finally(() => setIsLoading(false));
+    };
 
     return (
       <>
-        {filteredDogs.map((dog) => (
+        {dogsList.map((dog) => (
           <DogCard
             dog={dog}
             key={dog.id}
             onTrashIconClick={() => {
-              Requests.deleteDog(dog.id).then(() => this.props.refetchData());
+              handleTrashClick(dog.id);
             }}
             onHeartClick={() => {
-              Requests.updateDog(dog.id, { isFavorite: false }).then(() =>
-                this.props.refetchData()
-              );
+              handleHeartClick(dog.id, false);
             }}
             onEmptyHeartClick={() => {
-              Requests.updateDog(dog.id, { isFavorite: true }).then(() =>
-                this.props.refetchData()
-              );
+              handleHeartClick(dog.id, true);
             }}
-            isLoading={this.props.isLoading}
+            isLoading={isLoading}
           />
         ))}
       </>

@@ -25,9 +25,8 @@ export class ClassCreateDogForm extends Component {
     this.setState({ dogPicture: img });
   };
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-
+  handleAddDog = () => {
+    this.props.setIsLoading(true);
     Requests.postDog(
       this.state.dogName,
       this.state.dogPicture,
@@ -42,8 +41,9 @@ export class ClassCreateDogForm extends Component {
             color: "#fff",
           },
         });
+        this.handleReset();
+        return this.props.refetchData();
       })
-      .then(() => this.props.refetchData())
       .catch((error) => {
         toast.error("Failed to create dog. Please try again.", {
           position: "top-center",
@@ -54,8 +54,11 @@ export class ClassCreateDogForm extends Component {
           },
         });
         console.error("Error creating dog:", error);
-      });
+      })
+      .finally(() => this.props.setIsLoading(false));
+  };
 
+  handleReset = () => {
     this.setState({
       dogName: "",
       dogDescription: "",
@@ -63,8 +66,15 @@ export class ClassCreateDogForm extends Component {
     });
   };
 
+  handleSubmit = (e) => {
+    e.preventDefault();
+
+    this.handleAddDog();
+  };
+
   render() {
     const { dogName, dogDescription, dogPicture } = this.state;
+    const { isLoading } = this.props;
 
     return (
       <form
@@ -84,7 +94,7 @@ export class ClassCreateDogForm extends Component {
           onChange={(e) => {
             this.setDogName(e.target.value);
           }}
-          disabled={false}
+          disabled={isLoading}
         />
         <label htmlFor="description">Dog Description</label>
         <textarea
@@ -96,7 +106,7 @@ export class ClassCreateDogForm extends Component {
           onChange={(e) => {
             this.setDogDescription(e.target.value);
           }}
-          disabled={false}
+          disabled={isLoading}
         />
         <label htmlFor="picture">Select an Image</label>
         <select
@@ -105,7 +115,7 @@ export class ClassCreateDogForm extends Component {
           onChange={(e) => {
             this.setDogPicture(e.target.value);
           }}
-          disabled={false}
+          disabled={isLoading}
         >
           {Object.entries(dogPictures).map(([label, pictureValue]) => {
             return (
@@ -115,7 +125,7 @@ export class ClassCreateDogForm extends Component {
             );
           })}
         </select>
-        <input type="submit" value="submit" disabled={false} />
+        <input type="submit" value="submit" disabled={isLoading} />
         <Toaster />
       </form>
     );

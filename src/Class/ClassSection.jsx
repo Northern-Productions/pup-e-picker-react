@@ -3,17 +3,11 @@ import { Link } from "react-router-dom";
 import React from "react";
 
 export class ClassSection extends Component {
-  switchActive = (e, filter) => {
-    if (!e.target.classList.contains("active")) {
-      e.target.classList.add("active");
-      this.props.setSelectedFilter(filter);
-      this.props.setShowCreateDogForm(filter === "create dog");
-    } else {
-      e.target.classList.remove("active");
-      this.props.setSelectedFilter("allDogs");
-      this.props.setShowCreateDogForm(false);
-    }
-  };
+  switchActive(newFilter) {
+    const userSelection =
+      newFilter === this.props.selectedFilter ? "allDogs" : newFilter;
+    this.props.setSelectedFilter(userSelection);
+  }
 
   render() {
     const { children, selectedFilter, favCount, unfavCount, ...restProps } =
@@ -34,8 +28,8 @@ export class ClassSection extends Component {
               className={`selector ${
                 selectedFilter === "favorited" ? "active" : ""
               }`}
-              onClick={(e) => {
-                this.switchActive(e, "favorited");
+              onClick={() => {
+                this.switchActive("favorited");
               }}
             >
               favorited ( {favCount} )
@@ -46,8 +40,8 @@ export class ClassSection extends Component {
               className={`selector ${
                 selectedFilter === "unfavorited" ? "active" : ""
               }`}
-              onClick={(e) => {
-                this.switchActive(e, "unfavorited");
+              onClick={() => {
+                this.switchActive("unfavorited");
               }}
             >
               unfavorited ( {unfavCount} )
@@ -56,8 +50,8 @@ export class ClassSection extends Component {
               className={`selector ${
                 selectedFilter === "create dog" ? "active" : ""
               }`}
-              onClick={(e) => {
-                this.switchActive(e, "create dog");
+              onClick={() => {
+                this.switchActive("create dog");
               }}
             >
               create dog

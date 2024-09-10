@@ -3,15 +3,13 @@ import { ClassSection } from "./ClassSection";
 import { ClassDogs } from "./ClassDogs";
 import { ClassCreateDogForm } from "./ClassCreateDogForm";
 import { Requests } from "../api";
+import toast from "react-hot-toast";
 
 export class ClassApp extends Component {
   constructor(props) {
     super(props);
     this.state = {
       selectedFilter: "allDogs",
-      favCount: "",
-      unfavCount: "",
-      showCreateDogForm: false,
       allDogs: [],
       isLoading: false,
     };
@@ -19,18 +17,6 @@ export class ClassApp extends Component {
 
   setSelectedFilter = (filter) => {
     this.setState({ selectedFilter: filter });
-  };
-
-  setFavCount = (count) => {
-    this.setState({ favCount: count });
-  };
-
-  setUnfavCount = (count) => {
-    this.setState({ unfavCount: count });
-  };
-
-  setShowCreateDogForm = (show) => {
-    this.setState({ showCreateDogForm: show });
   };
 
   setAllDogs = (dogs) => {
@@ -42,26 +28,31 @@ export class ClassApp extends Component {
   };
 
   refetchData = () => {
-    this.setIsLoading(true);
     Requests.getAllDogs()
       .then((fetchedDogs) => {
         this.setAllDogs(fetchedDogs);
       })
-      .catch((error) => console.error("Failed to fetch dogs:", error))
-      .finally(() => {
-        this.setIsLoading(false);
+      .catch((error) => {
+        console.error("Failed to fetch dogs: ", error);
+        toast.error("Failed to fetch dogs: ", error);
       });
   };
 
+  componentDidMount() {
+    this.refetchData();
+  }
+
   render() {
-    const {
-      showCreateDogForm,
-      selectedFilter,
-      favCount,
-      unfavCount,
-      allDogs,
-      isLoading,
-    } = this.state;
+    const { selectedFilter, allDogs, isLoading } = this.state;
+
+    const favDogList = allDogs.filter((dog) => dog.isFavorite);
+    const unfavDogList = allDogs.filter((dog) => !dog.isFavorite);
+
+    const dogsList = {
+      allDogs: allDogs,
+      favorited: favDogList,
+      unfavorited: unfavDogList,
+    };
 
     return (
       <div className="App" style={{ backgroundColor: "goldenrod" }}>
@@ -71,22 +62,24 @@ export class ClassApp extends Component {
         <ClassSection
           selectedFilter={selectedFilter}
           setSelectedFilter={this.setSelectedFilter}
-          setShowCreateDogForm={this.setShowCreateDogForm}
-          favCount={favCount}
-          unfavCount={unfavCount}
+          favCount={favDogList.length}
+          unfavCount={unfavDogList.length}
         >
-          <ClassDogs
-            selectedFilter={selectedFilter}
-            favCount={favCount}
-            unfavCount={unfavCount}
-            setFavCount={this.setFavCount}
-            setUnfavCount={this.setUnfavCount}
-            refetchData={this.refetchData}
-            allDogs={allDogs}
-            isLoading={isLoading}
-          />
-          {showCreateDogForm && (
-            <ClassCreateDogForm refetchData={this.refetchData} />
+          {selectedFilter !== "create dog" && (
+            <ClassDogs
+              refetchData={this.refetchData}
+              dogsList={dogsList[selectedFilter]}
+              isLoading={isLoading}
+              setIsLoading={this.setIsLoading}
+            />
+          )}
+
+          {selectedFilter === "create dog" && (
+            <ClassCreateDogForm
+              refetchData={this.refetchData}
+              isLoading={this.isLoading}
+              setIsLoading={this.setIsLoading}
+            />
           )}
         </ClassSection>
       </div>
