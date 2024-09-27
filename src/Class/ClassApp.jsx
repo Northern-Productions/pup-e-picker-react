@@ -28,7 +28,7 @@ export class ClassApp extends Component {
   };
 
   refetchData = () => {
-    Requests.getAllDogs()
+    return Requests.getAllDogs()
       .then((fetchedDogs) => {
         this.setAllDogs(fetchedDogs);
       })

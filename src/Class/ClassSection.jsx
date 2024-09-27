@@ -58,14 +58,7 @@ export class ClassSection extends Component {
             </div>
           </div>
         </div>
-        <div className="content-container">
-          {React.Children.map(children, (child) => {
-            if (React.isValidElement(child)) {
-              return React.cloneElement(child, { ...restProps });
-            }
-            return child;
-          })}
-        </div>
+        <div className="content-container">{children}</div>
       </section>
     );
   }
