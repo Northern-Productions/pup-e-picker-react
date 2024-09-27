@@ -1,6 +1,5 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
-import React from "react";
 
 export class ClassSection extends Component {
   switchActive(newFilter) {
@@ -10,8 +9,7 @@ export class ClassSection extends Component {
   }
 
   render() {
-    const { children, selectedFilter, favCount, unfavCount, ...restProps } =
-      this.props;
+    const { children, selectedFilter, favCount, unfavCount } = this.props;
 
     return (
       <section id="main-section">
