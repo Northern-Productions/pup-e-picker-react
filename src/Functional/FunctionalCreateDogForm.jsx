@@ -15,9 +15,15 @@ export const FunctionalCreateDogForm = ({
   const [dogDescription, setDogDescription] = useState("");
   const [dogPicture, setDogPicture] = useState(defaultSelectedImage);
 
-  const handleAddDog = () => {
+  const handleReset = () => {
+    setDogName("");
+    setDogDescription("");
+    setDogPicture(defaultSelectedImage);
+  };
+
+  const handleAddDog = (dog) => {
     setIsLoading(true);
-    Requests.postDog(dogName, dogPicture, dogDescription)
+    return Requests.postDog(dog)
       .then(() => {
         toast.success("Dog created successfully!", {
           position: "top-center",
@@ -28,7 +34,7 @@ export const FunctionalCreateDogForm = ({
           },
         });
       })
-      .then(() => refetchData().then(handleReset()))
+      .then(() => refetchData())
       .catch((error) => {
         toast.error("Failed to create dog. Please try again.", {
           position: "top-center",
@@ -39,20 +45,19 @@ export const FunctionalCreateDogForm = ({
           },
         });
         console.error("Error creating dog:", error);
+        handleReset();
       })
       .finally(() => setIsLoading(false));
-  };
-
-  const handleReset = () => {
-    setDogName("");
-    setDogDescription("");
-    setDogPicture(defaultSelectedImage);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    handleAddDog();
+    handleAddDog({
+      name: dogName,
+      description: dogDescription,
+      picture: dogPicture,
+    });
   };
 
   return (

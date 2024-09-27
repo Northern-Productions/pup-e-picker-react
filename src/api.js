@@ -12,17 +12,13 @@ export const Requests = {
   },
   // should create a dog in the database from a partial dog object
   // and return a promise with the result
-  postDog: (name, image, description) => {
+  postDog: (dog) => {
     return fetch(`${baseUrl}/dogs`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        name: name,
-        image: image,
-        description: description,
-      }),
+      body: JSON.stringify({ dog }),
     }).then((response) => {
       if (!response.ok) {
         throw new Error(`Posting failed with status ${response.status}`);
